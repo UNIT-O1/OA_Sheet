@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OA Sheet - DSA 30 Patterns</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            line-height: 1.5;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* CSES Exact Header */
+        h1.cses-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 8px;
+        }
+
+        .cses-nav {
+            font-size: 14px;
+            font-weight: bold;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #cccccc;
+            margin-bottom: 20px;
+        }
+
+        .cses-nav span, .cses-nav a {
+            color: #0000ee;
+            text-decoration: none;
+            cursor: pointer;
+            margin-right: 6px;
+        }
+
+        .cses-nav span:hover, .cses-nav a:hover {
+            text-decoration: underline;
+        }
+
+        .cses-nav .divider {
+            color: #999999;
+            margin-right: 6px;
+            font-weight: normal;
+        }
+
+        /* 3 Metric Trackers */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: #f8f8f8;
+            border: 1px solid #d0d0d0;
+            padding: 10px 14px;
+            border-radius: 3px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            font-weight: bold;
+            color: #555555;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #000000;
+            margin: 2px 0 6px 0;
+            font-family: monospace;
+        }
+
+        .stat-bar-container {
+            background: #e0e0e0;
+            height: 4px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            background: #7bf07d;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* CSES Section Title */
+        .topic-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #000000;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+
+        /* CSES Table */
+        table.cses-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+            border-top: 1px solid #d0d0d0;
+        }
+
+        table.cses-table tr {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        table.cses-table th {
+            text-align: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: #555555;
+            padding: 4px 6px;
+            background: #f0f0f0;
+            border-left: 1px solid #ffffff;
+            text-transform: uppercase;
+        }
+
+        table.cses-table th.th-title {
+            text-align: left;
+            padding-left: 8px;
+        }
+
+        table.cses-table td {
+            padding: 6px 8px;
+            vertical-align: middle;
+        }
+
+        .doc-icon {
+            font-size: 14px;
+            margin-right: 6px;
+            color: #000000;
+        }
+
+        /* CSES Classic Blue Link Color #0000ee */
+        .prob-link {
+            color: #0000ee;
+            text-decoration: underline;
+            font-size: 15px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: normal;
+        }
+
+        .prob-link:hover {
+            color: #0000aa;
+        }
+
+        .lc-id {
+            font-family: monospace;
+            color: #666666;
+            font-size: 13px;
+            margin-left: 8px;
+        }
+
+        /* CSES Right Status Cells */
+        td.status-cell {
+            width: 48px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            user-select: none;
+            border-left: 1px solid #ffffff;
+        }
+
+        td.status-cell.unchecked {
+            background-color: #e0e0e0;
+            color: #000000;
+        }
+
+        td.status-cell.checked {
+            background-color: #7bf07d !important;
+            color: #000000 !important;
+        }
+
+        td.status-cell:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Title & Nav Bar -->
+    <h1 class="cses-title">OA Sheet</h1>
+    
+    <div class="cses-nav">
+        <span>TASKS</span>
+        <span class="divider">|</span>
+        <span onclick="resetProgress()" style="color: #cc0000;">RESET ALL</span>
+    </div>
+
+    <!-- 3 Metric Trackers -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total Completed</div>
+            <div class="stat-value" id="stat-solved">0 / 180</div>
+            <div class="stat-bar-container"><div class="stat-bar-fill" id="progress-solved"></div></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Coded Independently</div>
+            <div class="stat-value" id="stat-coded">0 / 180</div>
+            <div class="stat-bar-container"><div class="stat-bar-fill" id="progress-coded" style="background: #f0ad4e;"></div></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Fully Revised (3x)</div>
+            <div class="stat-value" id="stat-revised">0 / 180</div>
+            <div class="stat-bar-container"><div class="stat-bar-fill" id="progress-revised" style="background: #0275d8;"></div></div>
+        </div>
+    </div>
+
+    <!-- CSES Problem Tables Container -->
+    <div id="cses-container"></div>
+
+<script>
+const dataset = [
+  {
+    topic: "1. Sliding Window",
+    questions: [
+      { id: 3, name: "Longest Substring Without Repeating Characters", diff: "medium" },
+      { id: 76, name: "Minimum Window Substring", diff: "hard" },
+      { id: 209, name: "Minimum Size Subarray Sum", diff: "medium" },
+      { id: 424, name: "Longest Repeating Character Replacement", diff: "medium" },
+      { id: 567, name: "Permutation in String", diff: "medium" },
+      { id: 904, name: "Fruit Into Baskets", diff: "medium" }
+    ]
+  },
+  {
+    topic: "2. Two Pointers",
+    questions: [
+      { id: 11, name: "Container With Most Water", diff: "medium" },
+      { id: 15, name: "3Sum", diff: "medium" },
+      { id: 16, name: "3Sum Closest", diff: "medium" },
+      { id: 18, name: "4Sum", diff: "medium" },
+      { id: 42, name: "Trapping Rain Water", diff: "hard" },
+      { id: 167, name: "Two Sum II - Input Array Is Sorted", diff: "medium" }
+    ]
+  },
+  {
+    topic: "3. Fast/Slow Pointers (Linked List)",
+    questions: [
+      { id: 141, name: "Linked List Cycle", diff: "easy" },
+      { id: 142, name: "Linked List Cycle II", diff: "medium" },
+      { id: 19, name: "Remove Nth Node From End of List", diff: "medium" },
+      { id: 876, name: "Middle of the Linked List", diff: "easy" },
+      { id: 160, name: "Intersection of Two Linked Lists", diff: "easy" },
+      { id: 234, name: "Palindrome Linked List", diff: "easy" }
+    ]
+  },
+  {
+    topic: "4. Binary Search on Sorted Data",
+    questions: [
+      { id: 33, name: "Search in Rotated Sorted Array", diff: "medium" },
+      { id: 34, name: "Find First and Last Position of Element in Sorted Array", diff: "medium" },
+      { id: 35, name: "Search Insert Position", diff: "easy" },
+      { id: 153, name: "Find Minimum in Rotated Sorted Array", diff: "medium" },
+      { id: 162, name: "Find Peak Element", diff: "medium" },
+      { id: 704, name: "Binary Search", diff: "easy" }
+    ]
+  },
+  {
+    topic: "5. Binary Search on Answer",
+    questions: [
+      { id: 875, name: "Koko Eating Bananas", diff: "medium" },
+      { id: 1011, name: "Capacity To Ship Packages Within D Days", diff: "medium" },
+      { id: 410, name: "Split Array Largest Sum", diff: "hard" },
+      { id: 774, name: "Minimize Max Distance to Gas Station", diff: "hard" },
+      { id: 1283, name: "Find the Smallest Divisor Given a Threshold", diff: "medium" },
+      { id: 1482, name: "Minimum Number of Days to Make m Bouquets", diff: "medium" }
+    ]
+  },
+  {
+    topic: "6. Hashing / Frequency Maps",
+    questions: [
+      { id: 1, name: "Two Sum", diff: "easy" },
+      { id: 49, name: "Group Anagrams", diff: "medium" },
+      { id: 128, name: "Longest Consecutive Sequence", diff: "medium" },
+      { id: 217, name: "Contains Duplicate", diff: "easy" },
+      { id: 242, name: "Valid Anagram", diff: "easy" },
+      { id: 347, name: "Top K Frequent Elements", diff: "medium" }
+    ]
+  },
+  {
+    topic: "7. Prefix Sum / Running Sum",
+    questions: [
+      { id: 303, name: "Range Sum Query - Immutable", diff: "easy" },
+      { id: 560, name: "Subarray Sum Equals K", diff: "medium" },
+      { id: 724, name: "Find Pivot Index", diff: "easy" },
+      { id: 930, name: "Binary Subarrays With Sum", diff: "medium" },
+      { id: 974, name: "Subarray Sums Divisible by K", diff: "medium" },
+      { id: 523, name: "Continuous Subarray Sum", diff: "medium" }
+    ]
+  },
+  {
+    topic: "8. Difference Array / Range Updates",
+    questions: [
+      { id: 370, name: "Range Addition", diff: "medium" },
+      { id: 1094, name: "Car Pooling", diff: "medium" },
+      { id: 1109, name: "Corporate Flight Bookings", diff: "medium" },
+      { id: 1893, name: "Check if All the Integers in a Range Are Covered", diff: "easy" },
+      { id: 1943, name: "Describe the Painting", diff: "medium" },
+      { id: 2381, name: "Shifting Letters II", diff: "medium" }
+    ]
+  },
+  {
+    topic: "9. Monotonic Stack",
+    questions: [
+      { id: 739, name: "Daily Temperatures", diff: "medium" },
+      { id: 496, name: "Next Greater Element I", diff: "easy" },
+      { id: 503, name: "Next Greater Element II", diff: "medium" },
+      { id: 84, name: "Largest Rectangle in Histogram", diff: "hard" },
+      { id: 85, name: "Maximal Rectangle", diff: "hard" },
+      { id: 901, name: "Online Stock Span", diff: "medium" }
+    ]
+  },
+  {
+    topic: "10. Monotonic Queue / Deque",
+    questions: [
+      { id: 239, name: "Sliding Window Maximum", diff: "hard" },
+      { id: 862, name: "Shortest Subarray with Sum at Least K", diff: "hard" },
+      { id: 1425, name: "Constrained Subsequence Sum", diff: "hard" },
+      { id: 1438, name: "Longest Continuous Subarray With Absolute Diff Less Than or Equal to Limit", diff: "medium" },
+      { id: 1499, name: "Max Value of Equation", diff: "hard" },
+      { id: 1696, name: "Jump Game VI", diff: "medium" }
+    ]
+  },
+  {
+    topic: "11. Heap / Top K",
+    questions: [
+      { id: 215, name: "Kth Largest Element in an Array", diff: "medium" },
+      { id: 347, name: "Top K Frequent Elements", diff: "medium" },
+      { id: 692, name: "Top K Frequent Words", diff: "medium" },
+      { id: 703, name: "Kth Largest Element in a Stream", diff: "easy" },
+      { id: 973, name: "K Closest Points to Origin", diff: "medium" },
+      { id: 1046, name: "Last Stone Weight", diff: "easy" }
+    ]
+  },
+  {
+    topic: "12. Intervals",
+    questions: [
+      { id: 56, name: "Merge Intervals", diff: "medium" },
+      { id: 57, name: "Insert Interval", diff: "medium" },
+      { id: 252, name: "Meeting Rooms", diff: "easy" },
+      { id: 253, name: "Meeting Rooms II", diff: "medium" },
+      { id: 435, name: "Non-overlapping Intervals", diff: "medium" },
+      { id: 452, name: "Minimum Number of Arrows to Burst Balloons", diff: "medium" }
+    ]
+  },
+  {
+    topic: "13. Greedy Scheduling / Sorting",
+    questions: [
+      { id: 45, name: "Jump Game II", diff: "medium" },
+      { id: 55, name: "Jump Game", diff: "medium" },
+      { id: 406, name: "Queue Reconstruction by Height", diff: "medium" },
+      { id: 621, name: "Task Scheduler", diff: "medium" },
+      { id: 763, name: "Partition Labels", diff: "medium" },
+      { id: 134, name: "Gas Station", diff: "medium" }
+    ]
+  },
+  {
+    topic: "14. Linked List Manipulation",
+    questions: [
+      { id: 21, name: "Merge Two Sorted Lists", diff: "easy" },
+      { id: 23, name: "Merge k Sorted Lists", diff: "hard" },
+      { id: 24, name: "Swap Nodes in Pairs", diff: "medium" },
+      { id: 25, name: "Reverse Nodes in k-Group", diff: "hard" },
+      { id: 92, name: "Reverse Linked List II", diff: "medium" },
+      { id: 138, name: "Copy List with Random Pointer", diff: "medium" }
+    ]
+  },
+  {
+    topic: "15. Tree DFS",
+    questions: [
+      { id: 104, name: "Maximum Depth of Binary Tree", diff: "easy" },
+      { id: 112, name: "Path Sum", diff: "easy" },
+      { id: 113, name: "Path Sum II", diff: "medium" },
+      { id: 543, name: "Diameter of Binary Tree", diff: "easy" },
+      { id: 124, name: "Binary Tree Maximum Path Sum", diff: "hard" },
+      { id: 226, name: "Invert Binary Tree", diff: "easy" }
+    ]
+  },
+  {
+    topic: "16. Tree BFS / Level Order",
+    questions: [
+      { id: 102, name: "Binary Tree Level Order Traversal", diff: "medium" },
+      { id: 103, name: "Binary Tree Zigzag Level Order Traversal", diff: "medium" },
+      { id: 199, name: "Binary Tree Right Side View", diff: "medium" },
+      { id: 515, name: "Find Largest Value in Each Tree Row", diff: "medium" },
+      { id: 637, name: "Average of Levels in Binary Tree", diff: "easy" },
+      { id: 116, name: "Populating Next Right Pointers in Each Node", diff: "medium" }
+    ]
+  },
+  {
+    topic: "17. BST Problems",
+    questions: [
+      { id: 98, name: "Validate Binary Search Tree", diff: "medium" },
+      { id: 99, name: "Recover Binary Search Tree", diff: "medium" },
+      { id: 230, name: "Kth Smallest Element in a BST", diff: "medium" },
+      { id: 235, name: "Lowest Common Ancestor of a Binary Search Tree", diff: "medium" },
+      { id: 450, name: "Delete Node in a BST", diff: "medium" },
+      { id: 700, name: "Search in a Binary Search Tree", diff: "easy" }
+    ]
+  },
+  {
+    topic: "18. Backtracking Basics",
+    questions: [
+      { id: 46, name: "Permutations", diff: "medium" },
+      { id: 47, name: "Permutations II", diff: "medium" },
+      { id: 77, name: "Combinations", diff: "medium" },
+      { id: 78, name: "Subsets", diff: "medium" },
+      { id: 90, name: "Subsets II", diff: "medium" },
+      { id: 39, name: "Combination Sum", diff: "medium" }
+    ]
+  },
+  {
+    topic: "19. Backtracking with Constraints",
+    questions: [
+      { id: 40, name: "Combination Sum II", diff: "medium" },
+      { id: 17, name: "Letter Combinations of a Phone Number", diff: "medium" },
+      { id: 79, name: "Word Search", diff: "medium" },
+      { id: 131, name: "Palindrome Partitioning", diff: "medium" },
+      { id: 51, name: "N-Queens", diff: "hard" },
+      { id: 52, name: "N-Queens II", diff: "hard" }
+    ]
+  },
+  {
+    topic: "20. Graph BFS / DFS",
+    questions: [
+      { id: 200, name: "Number of Islands", diff: "medium" },
+      { id: 695, name: "Max Area of Island", diff: "medium" },
+      { id: 733, name: "Flood Fill", diff: "easy" },
+      { id: 994, name: "Rotting Oranges", diff: "medium" },
+      { id: 1091, name: "Shortest Path in Binary Matrix", diff: "medium" },
+      { id: 1254, name: "Number of Closed Islands", diff: "medium" }
+    ]
+  },
+  {
+    topic: "21. Topological Sort / DAG",
+    questions: [
+      { id: 207, name: "Course Schedule", diff: "medium" },
+      { id: 210, name: "Course Schedule II", diff: "medium" },
+      { id: 802, name: "Find Eventual Safe States", diff: "medium" },
+      { id: 1462, name: "Course Schedule IV", diff: "medium" },
+      { id: 1203, name: "Sort Items by Groups Respecting Dependencies", diff: "hard" },
+      { id: 2115, name: "Find All Possible Recipes from Given Supplies", diff: "medium" }
+    ]
+  },
+  {
+    topic: "22. Union Find / DSU",
+    questions: [
+      { id: 547, name: "Number of Provinces", diff: "medium" },
+      { id: 684, name: "Redundant Connection", diff: "medium" },
+      { id: 1319, name: "Number of Operations to Make Network Connected", diff: "medium" },
+      { id: 1579, name: "Remove Max Number of Edges to Keep Graph Fully Traversable", diff: "hard" },
+      { id: 990, name: "Satisfiability of Equality Equations", diff: "medium" },
+      { id: 1202, name: "Smallest String With Swaps", diff: "medium" }
+    ]
+  },
+  {
+    topic: "23. Shortest Path",
+    questions: [
+      { id: 743, name: "Network Delay Time", diff: "medium" },
+      { id: 787, name: "Cheapest Flights Within K Stops", diff: "medium" },
+      { id: 1514, name: "Path with Maximum Probability", diff: "medium" },
+      { id: 1631, name: "Path With Minimum Effort", diff: "medium" },
+      { id: 1334, name: "Find the City With the Smallest Number of Neighbors at a Threshold Distance", diff: "medium" },
+      { id: 1976, name: "Number of Ways to Arrive at Destination", diff: "medium" }
+    ]
+  },
+  {
+    topic: "24. MST / Graph Greedy",
+    questions: [
+      { id: 1584, name: "Min Cost to Connect All Points", diff: "medium" },
+      { id: 1135, name: "Connecting Cities With Minimum Cost", diff: "medium" },
+      { id: 1168, name: "Optimize Water Distribution in a Village", diff: "hard" },
+      { id: 1489, name: "Find Critical and Pseudo-Critical Edges in Minimum Spanning Tree", diff: "hard" },
+      { id: 778, name: "Swim in Rising Water", diff: "hard" },
+      { id: 1102, name: "Path With Maximum Minimum Value", diff: "medium" }
+    ]
+  },
+  {
+    topic: "25. Trie",
+    questions: [
+      { id: 208, name: "Implement Trie (Prefix Tree)", diff: "medium" },
+      { id: 211, name: "Design Add and Search Words Data Structure", diff: "medium" },
+      { id: 212, name: "Word Search II", diff: "hard" },
+      { id: 648, name: "Replace Words", diff: "medium" },
+      { id: 677, name: "Map Sum Pairs", diff: "medium" },
+      { id: 1268, name: "Search Suggestions System", diff: "medium" }
+    ]
+  },
+  {
+    topic: "26. Bit Manipulation",
+    questions: [
+      { id: 136, name: "Single Number", diff: "easy" },
+      { id: 137, name: "Single Number II", diff: "medium" },
+      { id: 191, name: "Number of 1 Bits", diff: "easy" },
+      { id: 338, name: "Counting Bits", diff: "easy" },
+      { id: 268, name: "Missing Number", diff: "easy" },
+      { id: 190, name: "Reverse Bits", diff: "easy" }
+    ]
+  },
+  {
+    topic: "27. 1D DP Basics",
+    questions: [
+      { id: 70, name: "Climbing Stairs", diff: "easy" },
+      { id: 198, name: "House Robber", diff: "medium" },
+      { id: 213, name: "House Robber II", diff: "medium" },
+      { id: 322, name: "Coin Change", diff: "medium" },
+      { id: 279, name: "Perfect Squares", diff: "medium" },
+      { id: 300, name: "Longest Increasing Subsequence", diff: "medium" }
+    ]
+  },
+  {
+    topic: "28. Knapsack / Subset DP",
+    questions: [
+      { id: 416, name: "Partition Equal Subset Sum", diff: "medium" },
+      { id: 494, name: "Target Sum", diff: "medium" },
+      { id: 518, name: "Coin Change II", diff: "medium" },
+      { id: 474, name: "Ones and Zeroes", diff: "medium" },
+      { id: 1049, name: "Last Stone Weight II", diff: "medium" },
+      { id: 879, name: "Profitable Schemes", diff: "hard" }
+    ]
+  },
+  {
+    topic: "29. Grid DP",
+    questions: [
+      { id: 62, name: "Unique Paths", diff: "medium" },
+      { id: 63, name: "Unique Paths II", diff: "medium" },
+      { id: 64, name: "Minimum Path Sum", diff: "medium" },
+      { id: 221, name: "Maximal Square", diff: "medium" },
+      { id: 931, name: "Minimum Falling Path Sum", diff: "medium" },
+      { id: 120, name: "Triangle", diff: "medium" }
+    ]
+  },
+  {
+    topic: "30. String DP / Sequence DP",
+    questions: [
+      { id: 1143, name: "Longest Common Subsequence", diff: "medium" },
+      { id: 72, name: "Edit Distance", diff: "hard" },
+      { id: 115, name: "Distinct Subsequences", diff: "hard" },
+      { id: 583, name: "Delete Operation for Two Strings", diff: "medium" },
+      { id: 97, name: "Interleaving String", diff: "medium" },
+      { id: 1312, name: "Minimum Insertion Steps to Make a String Palindrome", diff: "hard" }
+    ]
+  }
+];
+
+const STORAGE_KEY = "dsa_tracker_progress_v1";
+
+function loadProgress() {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+}
+
+function toggleStatus(id, key) {
+    const progress = loadProgress();
+    if (!progress[id]) progress[id] = {};
+    progress[id][key] = !progress[id][key];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+
+    // Update DOM status cell
+    const cell = document.getElementById(`cell-${id}-${key}`);
+    if (cell) {
+        if (progress[id][key]) {
+            cell.className = "status-cell checked";
+            cell.innerText = "✓";
+        } else {
+            cell.className = "status-cell unchecked";
+            cell.innerText = "-";
+        }
+    }
+
+    updateStats();
+}
+
+function resetProgress() {
+    if (confirm("Are you sure you want to reset all progress? This action cannot be undone.")) {
+        localStorage.removeItem(STORAGE_KEY);
+        renderTracker();
+        updateStats();
+    }
+}
+
+function renderTracker() {
+    const container = document.getElementById("cses-container");
+    container.innerHTML = "";
+    const progress = loadProgress();
+
+    dataset.forEach(topic => {
+        const topicSection = document.createElement("div");
+        topicSection.className = "topic-section";
+
+        let tableHtml = `
+            <div class="topic-title">${topic.topic}</div>
+            <table class="cses-table">
+                <thead>
+                    <tr>
+                        <th class="th-title">Task Title</th>
+                        <th>SOLVED</th>
+                        <th>CODE</th>
+                        <th>R1</th>
+                        <th>R2</th>
+                        <th>R3</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        topic.questions.forEach(q => {
+            const p = progress[q.id] || {};
+            const slug = q.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            const lcUrl = `https://leetcode.com/problems/${slug}/`;
+            const keys = ['s', 'c', 'r1', 'r2', 'r3'];
+
+            tableHtml += `
+                <tr>
+                    <td>
+                        <span class="doc-icon">🗎</span>
+                        <a href="${lcUrl}" target="_blank" class="prob-link">${q.name}</a>
+                        <span class="lc-id">#${q.id}</span>
+                    </td>
+                    ${keys.map(k => `
+                        <td 
+                            id="cell-${q.id}-${k}" 
+                            class="status-cell ${p[k] ? 'checked' : 'unchecked'}" 
+                            onclick="toggleStatus(${q.id}, '${k}')"
+                            title="Click to toggle status"
+                        >
+                            ${p[k] ? '✓' : '-'}
+                        </td>
+                    `).join('')}
+                </tr>
+            `;
+        });
+
+        tableHtml += `</tbody></table>`;
+        topicSection.innerHTML = tableHtml;
+        container.appendChild(topicSection);
+    });
+
+    updateStats();
+}
+
+function updateStats() {
+    const progress = loadProgress();
+    let solvedCount = 0, codedCount = 0, revisedCount = 0;
+
+    Object.values(progress).forEach(p => {
+        if (p.s) solvedCount++;
+        if (p.c) codedCount++;
+        if (p.r1 && p.r2 && p.r3) revisedCount++;
+    });
+
+    document.getElementById("stat-solved").innerText = `${solvedCount} / 180`;
+    document.getElementById("stat-coded").innerText = `${codedCount} / 180`;
+    document.getElementById("stat-revised").innerText = `${revisedCount} / 180`;
+
+    document.getElementById("progress-solved").style.width = `${(solvedCount / 180) * 100}%`;
+    document.getElementById("progress-coded").style.width = `${(codedCount / 180) * 100}%`;
+    document.getElementById("progress-revised").style.width = `${(revisedCount / 180) * 100}%`;
+}
+
+renderTracker();
+</script>
+</body>
+</html>
